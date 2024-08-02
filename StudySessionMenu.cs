@@ -67,7 +67,8 @@ namespace Flashcards
 
                 if (!reader.HasRows)
                 {
-                    Console.WriteLine("No sessions found for the specified year.");
+                    Console.WriteLine("No sessions found for the specified year. Press any key to return to menu");
+                    Console.ReadLine();
                     reader.Close();
                     connection.Close();
                     ManageStudySession();
