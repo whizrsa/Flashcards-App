@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Globalization;
 
-namespace Flashcards
+namespace Flashcards.Models
 {
     internal class StudySessionMenu
     {

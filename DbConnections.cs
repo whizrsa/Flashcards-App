@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Flashcards.Models;
 using System.Data.SqlClient;
 using System.Data.Common;
 using System.Collections;
+
 namespace Flashcards
 {
     internal class DbConnections
@@ -104,26 +105,55 @@ namespace Flashcards
             Console.Clear();
             ViewStacks();
             Console.WriteLine("Please enter Stack Id to delete a Stack");
-            int stackId = Convert.ToInt32(Console.ReadLine());
+            string input = Console.ReadLine();
 
-            if (stackId.ToString() == "0") Menu.MainMenu();
+            if (input == "0") Menu.MainMenu();
+
+            if (!int.TryParse(input, out int stackId))
+            {
+                Console.WriteLine("Invalid Stack Id. Please enter a valid integer.");
+                Console.ReadLine();
+                DeleteStack();
+                return;
+            }
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
+
+                // Delete related study sessions first
+                var deleteStudySessions = connection.CreateCommand();
+                deleteStudySessions.CommandText = @"
+                    DELETE FROM StudySessions WHERE StackId = @stackId
+                    ";
+                deleteStudySessions.Parameters.AddWithValue("@stackId", stackId);
+                deleteStudySessions.ExecuteNonQuery();
+
+                // Delete related flashcards
+                var deleteFlashCards = connection.CreateCommand();
+                deleteFlashCards.CommandText = @"
+                    DELETE FROM FlashCards WHERE StackId = @stackId
+                    ";
+                deleteFlashCards.Parameters.AddWithValue("@stackId", stackId);
+                deleteFlashCards.ExecuteNonQuery();
+
+                // Delete the stack
                 var deleteStack = connection.CreateCommand();
                 deleteStack.CommandText = @"
-                DELETE FROM Stacks WHERE Id = @stackId
-                ";
+                    DELETE FROM Stacks WHERE Id = @stackId
+                    ";
                 deleteStack.Parameters.AddWithValue("@stackId", stackId);
-
                 deleteStack.ExecuteNonQuery();
 
                 connection.Close();
             }
 
+            Console.WriteLine("Stack and its related records deleted successfully. Press any key to continue.");
+            Console.ReadLine();
             Menu.MainMenu();
         }
+
+
 
         internal static void ViewStacks()
         {
@@ -175,8 +205,6 @@ namespace Flashcards
 
 
             if (stackId.ToString() == "0") Menu.MainMenu();
-
-
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

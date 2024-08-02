@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Flashcards.Models;
 
 namespace Flashcards
 {
@@ -10,6 +11,7 @@ namespace Flashcards
     {
         internal static void MainMenu()
         {
+            Console.Clear();
             bool runMenu = true;
             Console.WriteLine("Select a function");
             Console.WriteLine("0. Exit \n1. Add a Stack\n2. Delete a Stack\n3. Add a Flash Card\n4. Delete a Flash Card\n5. Study Session");

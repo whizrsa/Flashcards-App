@@ -1,4 +1,5 @@
 ﻿using System.Data.SqlClient;
+using Flashcards.Models;
 namespace Flashcards
 {
     internal class Program
