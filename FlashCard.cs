@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace Flashcards
 {
-    internal class FlashCard
+    public class FlashCard
     {
         public int Id { get;  set; }
         public int StackId { get;  set; }
         public string Front { get;  set; }
-        public string Back { get;  set; }    
+        public string Back { get;  set; }
+        public string Category { get; set; }
+        public string Difficulty { get; set; }
 
         /*
         public FlashCard(int id, string stackId, string front, string back)

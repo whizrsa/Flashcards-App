@@ -39,6 +39,8 @@ namespace Flashcards
                             StackId INT NOT NULL,
                             Front NVARCHAR(255) NOT NULL,
                             Back NVARCHAR(255) NOT NULL,
+                            Category NVARCHAR(50) NULL,
+                            Difficulty NVARCHAR(20) NULL,
                             FOREIGN KEY (StackId) REFERENCES Stacks(Id)
                      );
                 END
@@ -62,6 +64,32 @@ namespace Flashcards
                 createStackTable.ExecuteNonQuery();
                 createFlashCardTable.ExecuteNonQuery();
                 createStudySession.ExecuteNonQuery();
+
+                // Add Category and Difficulty columns to FlashCards if they don't exist
+                var alterFlashCardsTable = connection.CreateCommand();
+                alterFlashCardsTable.CommandText = @"
+                IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[FlashCards]') AND name = 'Category')
+                BEGIN
+                    ALTER TABLE FlashCards ADD Category NVARCHAR(50) NULL;
+                END
+
+                IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[FlashCards]') AND name = 'Difficulty')
+                BEGIN
+                    ALTER TABLE FlashCards ADD Difficulty NVARCHAR(20) NULL;
+                END
+                ";
+                alterFlashCardsTable.ExecuteNonQuery();
+
+                // Update existing records to have default values
+                var updateDefaults = connection.CreateCommand();
+                updateDefaults.CommandText = @"
+                UPDATE FlashCards 
+                SET Category = 'General', Difficulty = 'Medium' 
+                WHERE Category IS NULL OR Difficulty IS NULL
+                ";
+                updateDefaults.ExecuteNonQuery();
+
+                connection.Close();
             }
         }
 
