@@ -1,4 +1,5 @@
 using System.Windows;
+using Flashcards.Services;
 
 namespace Flashcards
 {
@@ -9,7 +10,7 @@ namespace Flashcards
             base.OnStartup(e);
             
             // Initialize database
-            DbConnections.CreateDb();
+            DatabaseService.InitializeDatabase();
         }
     }
 }
